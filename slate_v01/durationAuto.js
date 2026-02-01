@@ -28,9 +28,9 @@ try {
 function methodTC (dur, fps) {
 	let tc;
 	if (fps == "29.970") {
-			tc = timeToNTSCTimecode(dur, ntscDropFrame = false, isDuration = true);
+			tc = timeToNTSCTimecode(dur, ntscDropFrame = true, isDuration = false);
 	} else {
-			tc = timeToTimecode(dur, 25, isDuration=false);
+			tc = timeToTimecode(dur, fps, isDuration = false);
 	}
 	return tc;
 }

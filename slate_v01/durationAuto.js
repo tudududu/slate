@@ -24,12 +24,5 @@ try {
     compDurationAdjusted = compDuration - preRoll;
 }
 
-function methodTC (dur, fps) {
-	let tc;
-    tc = timeToTimecode(dur, fps, isDuration = false);
-	return tc;
-}
-
-let autoTC = methodTC(compDurationAdjusted, timeBase);
-
+let autoTC = timeToTimecode(compDurationAdjusted, timeBase, isDuration = false);
 autoTC;

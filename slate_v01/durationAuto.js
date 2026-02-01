@@ -1,4 +1,4 @@
-// jen durationAuto, manual odstranen 230830
+// durationAuto, version 230830
 
 let composition = thisComp.layer("compName").text.sourceText;
 let compDuration = comp(composition).duration;
@@ -7,15 +7,15 @@ let compDurationAdjusted = compDuration + startTC;
 let frameDur = comp(composition).frameDuration;
 let timeBase = parseFloat((1.0 / frameDur).toFixed(3));
 let timeBaseString = (1.0 / frameDur).toFixed(3);
-let compDurKoef = 0.999; 	// koeficient pro opravu delky pri 23.976 fpd
-// 10738 / 10748.748748748749 // pomer spravne a spatne (23.976) delky zmerene pro 02:58:58:00
+let compDurKoef = 0.999; 	// coefficient for duration at 23.976 fps
+// 10738 / 10748.748748748749 // ratio of correct and incorrect (23.976) length measured for 02:58:58:00
 let compDurAdj23 = compDurationAdjusted * compDurKoef;
 
 
 
-// muj timeToTimecode()-------------------------------
+// my timeToTimecode()-------------------------------
 function timeToTimecodeMy(compDurLoc, frameDurLoc) {
-// prevod jednocifra na dvoucifru
+// conversion one digit -> two digits
 function pad(num, positions) {
     num = num.toString();
     while (num.length < positions) {
@@ -27,7 +27,7 @@ function pad(num, positions) {
 let ffTotalZbytek = compDurLoc % 1;
 let ffZb = ffTotalZbytek / frameDurLoc;
 let ffZbRound = Math.floor(ffZb);
-let ssFloor = Math.floor(compDurLoc % 60); // vteriny jen cele
+let ssFloor = Math.floor(compDurLoc % 60); // seconds only whole
 let minutesZb = Math.floor((compDurLoc / 60) % 60);
 let hhTotal = Math.floor(compDurLoc / 3600);
 
@@ -39,22 +39,21 @@ let tc = `${hh}:${mm}:${ss}:${ff}`;
 
 return tc;
 }
-// muj timeToTimecode()-------------------------------
+// my timeToTimecode()-------------------------------
 
-// vyber metody vypoctu TC
-function vyhybka (fps, dur, dur23) {
+// TC method
+function methodTC (fps, dur, dur23) {
 	let tc;
 	if (fps == "29.970") {
-			tc = timeToNTSCTimecode(dur, ntscDropFrame = false, isDuration = true);	//"29.97"
+			tc = timeToNTSCTimecode(dur, ntscDropFrame = false, isDuration = true);
 	} else if (fps == "23.976"){
-			tc = timeToTimecodeMy(dur23, frameDur); // funguje
+			tc = timeToTimecodeMy(dur23, frameDur);
 	} else {
-			tc = timeToTimecodeMy(dur, frameDur);	//"ostatni"
+			tc = timeToTimecodeMy(dur, frameDur);
 	}
 	return tc;
 }
 
-// automaticky TC
-let autoTC = vyhybka(timeBaseString, compDurationAdjusted, compDurAdj23);
+let autoTC = methodTC(timeBaseString, compDurationAdjusted, compDurAdj23);
 
 autoTC;

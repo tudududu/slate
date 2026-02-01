@@ -5,7 +5,6 @@ let compDuration = comp(composition).duration;
 let startTC = comp(composition).displayStartTime;
 let frameDur = comp(composition).frameDuration;
 let timeBase = parseFloat((1.0 / frameDur).toFixed(3));
-let timeBaseString = (1.0 / frameDur).toFixed(3);
 let compDurationAdjusted;
 
 // Try to use reference layer "mediaPlaceholder" for duration
@@ -27,14 +26,10 @@ try {
 
 function methodTC (dur, fps) {
 	let tc;
-	if (fps == "29.970") {
-			tc = timeToNTSCTimecode(dur, ntscDropFrame = true, isDuration = false);
-	} else {
-			tc = timeToTimecode(dur, fps, isDuration = false);
-	}
+    tc = timeToTimecode(dur, fps, isDuration = false);
 	return tc;
 }
 
-let autoTC = methodTC(compDurationAdjusted, timeBaseString);
+let autoTC = methodTC(compDurationAdjusted, timeBase);
 
 autoTC;

@@ -1,4 +1,4 @@
-// durationAuto v260131
+// durationAuto v260201
 
 let composition = thisComp.layer("compName").text.sourceText;
 let compDuration = comp(composition).duration;
@@ -6,20 +6,23 @@ let startTC = comp(composition).displayStartTime;
 let frameDur = comp(composition).frameDuration;
 let timeBase = parseFloat((1.0 / frameDur).toFixed(3));
 let timeBaseString = (1.0 / frameDur).toFixed(3);
-let preRoll;
-let compDurationAdjusted = compDuration - preRoll;
+let compDurationAdjusted;
 
-// Get the offset between displayStartTime and actual content start
-// You need to define where your content actually starts
-let contentStart = 36000; // 10:00:00:00 in seconds (or get from a reference layer)
-let displayStartTC = comp(composition).displayStartTime;
-
-if (displayStartTC < 0) {
-    // Negative pre-roll case (original logic)
-    preRoll = -displayStartTC;
-} else {
-    // Positive timecode case - calculate pre-roll from offset
-    preRoll = contentStart - displayStartTC;
+// Try to use reference layer "mediaPlaceholder" for duration
+try {
+    let refLayer = comp(composition).layer("mediaPlaceholder").source;
+    compDurationAdjusted = refLayer.duration;
+} catch (e) {
+    // Fallback: calculate from comp duration minus preRoll
+    let preRoll;
+    if (startTC < 0) {
+        // Negative pre-roll case (original logic)
+        preRoll = -startTC;
+    } else {
+        // Positive timecode case: no adjustment
+        preRoll = 0;
+    }
+    compDurationAdjusted = compDuration - preRoll;
 }
 
 function methodTC (dur, fps) {
@@ -27,7 +30,7 @@ function methodTC (dur, fps) {
 	if (fps == "29.970") {
 			tc = timeToNTSCTimecode(dur, ntscDropFrame = false, isDuration = true);
 	} else {
-			tc = timeToTimecode(dur, fps, isDuration=false);
+			tc = timeToTimecode(dur, 25, isDuration=false);
 	}
 	return tc;
 }

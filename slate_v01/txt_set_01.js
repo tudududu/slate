@@ -1,7 +1,8 @@
-//	slate 241217
+//	slate 250410
 //	set 01
 //  update camelCase splitting,
 //  tak aby rozdelil "Word2025word" na "Word 2025 word"
+//  tak aby rozdelil "3xWord" na "3 x Word"
 
 let switchBrand = thisComp.layer("controls").effect("brand_switch")("Checkbox");
 let switchLang = thisComp.layer("controls").effect("language_Switch")("Checkbox");
@@ -10,10 +11,26 @@ let switchTitle = thisComp.layer("controls").effect("title_switch")("Checkbox");
 let compName = thisComp.layer("compName").text.sourceText;
 let compNameSplit = compName.split(/[\s_-]+/);	//splitting (space, _, -)
 // camelCase splitting
-//const regex = /([a-z])([A-Z])/g;
-//let replacement = "$1 $2";
-const regex = /([a-z])([A-Z0-9])|([0-9])([a-zA-Z])/g;
-let replacement = "$1$3 $2$4";
+
+// Instead of a direct replacement, use this two-step approach
+function processText(input) {
+    if (!input) return "";
+    
+    // First, handle transitions between character types by placing markers
+    let marked = input;
+    
+    // Handle lowercase to uppercase transitions (camelCase)
+    marked = marked.replace(/([a-z])([A-Z])/g, '$1|$2');
+    
+    // Handle digit to letter transitions
+    marked = marked.replace(/([0-9])([a-zA-Z])/g, '$1|$2');
+    
+    // Handle letter to digit transitions
+    marked = marked.replace(/([a-zA-Z])([0-9])/g, '$1|$2');
+    
+    // Finally, replace all markers with spaces
+    return marked.replace(/\|/g, ' ');
+}
 
 // "gumuje" pole pokud je vynuto vypinacem
 function vyplneno(txtField, fieldSwitch) {
@@ -39,8 +56,8 @@ let textIn_Title = compNameSplit[4 + switchBrand + switchLang];
 let text_Title = vyplneno(textIn_Title, switchTitle);
 
 // txtOut
-`${textIn_Client.replace(regex, replacement)}
-${text_Brand.replace(regex, replacement)}
-${textIn_Campaign.replace(regex, replacement)}
-${text_Title.replace(regex, replacement)}
+`${processText(textIn_Client)}
+${processText(text_Brand)}
+${processText(textIn_Campaign)}
+${processText(text_Title)}
 ${textIn_Country}										${text_Lang}`;

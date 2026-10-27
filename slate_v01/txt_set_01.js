@@ -1,8 +1,6 @@
-//	slate 250410
-//	set 01
-//  update camelCase splitting,
-//  tak aby rozdelil "Word2025word" na "Word 2025 word"
-//  tak aby rozdelil "3xWord" na "3 x Word"
+// text set 01: slate 261027
+// camelCase splitting update:
+// AYSBarista -> AYS Barista
 
 let switchBrand = thisComp.layer("controls").effect("brand_switch")("Checkbox");
 let switchLang = thisComp.layer("controls").effect("language_Switch")("Checkbox");
@@ -18,7 +16,9 @@ function processText(input) {
     
     // First, handle transitions between character types by placing markers
     let marked = input;
-    
+
+    // splits an uppercase abbreviation from the capitalized word that follows
+    marked = marked.replace(/([A-Z]+)([A-Z][a-z])/g, '$1|$2');
     // Handle lowercase to uppercase transitions (camelCase)
     marked = marked.replace(/([a-z])([A-Z])/g, '$1|$2');
     

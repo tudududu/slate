@@ -1,6 +1,7 @@
-//	slate 240529
+//	slate 241217
 //	set 01
-//	vlozen replace pro rozdeleni camel textu zobrazovaneho v polich
+//  update camelCase splitting,
+//  tak aby rozdelil "Word2025word" na "Word 2025 word"
 
 let switchBrand = thisComp.layer("controls").effect("brand_switch")("Checkbox");
 let switchLang = thisComp.layer("controls").effect("language_Switch")("Checkbox");
@@ -8,8 +9,11 @@ let switchTitle = thisComp.layer("controls").effect("title_switch")("Checkbox");
 
 let compName = thisComp.layer("compName").text.sourceText;
 let compNameSplit = compName.split(/[\s_-]+/);	//splitting (space, _, -)
-const regex = /([a-z])([A-Z])/g;
-let replacement = "$1 $2";
+// camelCase splitting
+//const regex = /([a-z])([A-Z])/g;
+//let replacement = "$1 $2";
+const regex = /([a-z])([A-Z0-9])|([0-9])([a-zA-Z])/g;
+let replacement = "$1$3 $2$4";
 
 // "gumuje" pole pokud je vynuto vypinacem
 function vyplneno(txtField, fieldSwitch) {
